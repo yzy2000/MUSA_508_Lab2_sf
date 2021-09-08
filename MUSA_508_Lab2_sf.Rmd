@@ -98,7 +98,7 @@ ggplot()+
 
 ## `{sf}` and why spatial is special
 
-There are two important additions in the above code that allow us to go from tabular data to spatial data. This is incredibly powerful because once data has a spatial component, it opens up a whole new world (pun intended!) of analytical possibilities. Instead of onyl analyzing how the variables are correlated, we can not measure how they are correlated over space, how near, how far, how clustered or dispersed. We have access to analyzing the entire spatial system that led to these data being what they are. To quote the Tobler's First Law of Geography, "*everything is related to everything else, but near things are more related than distant things.*" [wikipedia](https://en.wikipedia.org/wiki/Tobler%27s_first_law_of_geography). The rest of this semester will be using spatial relations to better understand data for more effective public policy.
+There are two important additions in the above code that allow us to go from tabular data to spatial data. This is incredibly powerful because once data has a spatial component, it opens up a whole new world (pun intended!) of analytical possibilities. Instead of only analyzing how the variables are correlated, we can now measure how they are correlated over space, how near, how far, how clustered or dispersed. We have access to analyzing the entire spatial system that led to these data being what they are. To quote the Tobler's First Law of Geography, "*everything is related to everything else, but near things are more related than distant things.*" [wikipedia](https://en.wikipedia.org/wiki/Tobler%27s_first_law_of_geography). The rest of this semester will be using spatial relations to better understand data for more effective public policy.
 
 To understand how the `{sf}` helps us do that, we will break it down using the `acsTractsPHL.2016.sf` object we just created from `{tidycensus}`. Compared to fetching tabular data, the one new addition to that code is:
 
@@ -112,7 +112,7 @@ Using the `geometry = TRUE` argument in the `get_acs()` function does a lot of w
 class(acsTractsPHL.2016.sf)
 ```
 
-First, we can see what `class` the `acsTractsPHL.2016.sf` object is. It is class `sf` first and then `data.table` second. This means that you can write R code to treat this as a spatial class, but that you can also do a lot of the things you would normally do with a `data.table` to it as well. That is very handy!
+First, we can see what `class` the `acsTractsPHL.2016.sf` object is. It is class `sf` first and then `data.frame` second. This means that you can write R code to treat this as a spatial class, but that you can also do a lot of the things you would normally do with a `data.frame` to it as well. That is very handy!
 
 If we print the `acsTractsPHL.2016.sf` object, it looks a lot like a table, but has some extra information at the top that it is an `{sf}` object and has attributes aside from the tabular data.
 
@@ -128,7 +128,9 @@ You will notice new information at the top of the print out from the `acsTractsP
 -   bbox: xmin: -75.23584 ymin: 39.96507 xmax: -75.22407 ymax: 39.99188
 -   geographic CRS: NAD83
 
-The first line tells you that you have a "Simple feature" collection of a certain number of rows and columns. More on this later, but `sf` stands for "simple features". We only have 2 features here because I limited it to two in the code above to save room. The `geometry type` tell us that the data is represented as a polygon; an area represented by at least three sides. The could also be POINT or POLYLINE if there data were represented as points or lines. The `dimension` tells us how the data are measured. It will typically always be "XY" in our class. Next the `bbox` tells us what the bounding box is for these data. The bounding box is the smallest rectangle that can be drawn to fit all of the data points. The numbers tell us the coordinates of the coordinates of the sides of the bbox. From that we can figure out what the corners are as demonstrated below. The final bit of information is the `geographic CRS` which stands for coordinate reference system. You noticed in the bbox line that the box is measure in some way, in this case it is familiar latitude and longitude. However, we can measure geographic space using thousands of different coordinate systems. This is a major theme in this course; **There are many different ways to measure things in space. Each method has trade offs. You will have to know the basic systems and how to move data between them.** You could spend an entire career learning about coordinate systems, but for this course, you will only need the basics. More on that below.
+The first line tells you that you have a "Simple feature" collection of a certain number of rows and columns. More on this later, but `sf` stands for "simple features". We only have 2 features here because I limited it to two in the code above to save room. The `geometry type` tell us that the data is represented as a polygon; an area represented by at least three sides. The could also be POINT or POLYLINE if there data were represented as points or lines. The `dimension` tells us how the data are measured. It will typically always be "XY" in our class. Next the `bbox` tells us what the bounding box is for these data. The bounding box is the smallest rectangle that can be drawn to fit all of the data points. The numbers tell us the coordinates of the sides of the bbox. From that we can figure out what the corners are as demonstrated below. The final bit of information is the `geographic CRS` which stands for coordinate reference system.
+
+You noticed in the bbox line that the box is measured in some way, in this case it is familiar latitude and longitude. However, we can measure geographic space using thousands of different coordinate systems. This is a major theme in this course; **There are many different ways to measure things in space. Each method has trade offs. You will have to know the basic systems and how to move data between them.** You could spend an entire career learning about coordinate systems, but for this course, you will only need the basics. More on that below.
 
 ![](IMG/Varying-bounding-box-coordinates-each-bounding-box-is-created-based-on-the-minimum-and.png){width="507"}
 
@@ -148,7 +150,7 @@ If you look at what class the `geometry` column is, you can see that it is a cla
 class(acsTractsPHL.2016.sf$geometry)
 ```
 
-The `geometry` column as an `sfc` can stand on its own, be plotted and analyzed, but it isn't very interesting without the associated data. Adding the interesting data is exactly what the `geometry == TRUE` argument of `get_acs()` does for us. Putting it together, `data.frame` + `sfc` = `sf`!
+The `geometry` column as an `sfc` can stand on its own, be plotted and analyzed, but it isn't very interesting without the associated data. Adding the interesting data is exactly what the `geometry = TRUE` argument of `get_acs()` does for us. Putting it together, `data.frame` + `sfc` = `sf`!
 
 ### What about the Coordinates?
 
@@ -284,7 +286,7 @@ PHL_data.sf <- PHL_data %>%
            crs = "EPSG:4326") 
 ```
 
-Combining the points with out ACS tract outlines works since both objects have the same CRS of `4326`.
+Combining the points with our ACS tract outlines works since both objects have the same CRS of `4326`.
 
 ```{r}
 tm_shape(acsTractsPHL.2016.sf_WGS84) +
@@ -302,7 +304,7 @@ Finally, another common operation is to remove the geometry to either do non-spa
 
 ### Removing geometry
 
-To remove the geometry all together is as easy as using `st_drop_geometry()`. This leaves you with a plain data.frame and as aspects of the spatial data, including the geometry column are gone.
+To remove the geometry all together is as easy as using `st_drop_geometry()`. This leaves you with a plain data.frame with all aspects of the spatial data removed, including the geometry column.
 
 ```{r}
 acsTractsPHL.2016_nonsf <- st_drop_geometry(acsTractsPHL.2016.sf)
@@ -398,7 +400,7 @@ tm_legend(show = FALSE) +
 
 ## Spatial Joins
 
-Spatial joins are at the foundation of doing spatial analysis. Typical table joins allow us to columns based on an identifier. We used that approach above and used `st_as_af()` to make it spatial. This works well for point coordinates and when the filtering is not spatial. In cases where the filter, sorting, and summarizing operations are spatial we need spatial joins. This exercise ends on a quick spatial join example, but the following exercises and assignments require spatial operations like this to replicate typical GIS functionality.
+Spatial joins are at the foundation of doing spatial analysis. Typical table joins allow us to logically combine columns based on an identifier. We used that approach above and used `st_as_af()` to make it spatial. This works well for point coordinates and when the filtering is not spatial. In cases where the filter, sorting, and summarizing operations are spatial we need spatial joins. This exercise ends on a quick spatial join example, but the following exercises and assignments require spatial operations like this to replicate typical GIS functionality.
 
 THe objective below is to find the average of `variable1` from our made up point data `PHL_data.sf` for each ACS tract polygon that contains a point. We achieve this by using `st_join` to intersect the polygon features with the points. The resulting table will have more rows than the original `acsTractsPHL.2016.sf` because several tracks will contain numerous points and are therefore duplicated for each of the `variable1` values of `PHL_data.sf`. Imagine that `PHL_data.sf` contains crime incidents or traffic counts and we want to extrapolate them to the tract polygons.
 
