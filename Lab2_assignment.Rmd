@@ -1,0 +1,63 @@
+---
+title: "Lab2_assignment"
+author: "Matt Harris"
+date: "9/8/2021"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup_package, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(tidycensus)
+library(sf)
+library(tmap) # mapping, install if you don't have it
+set.seed(717)
+```
+
+
+Find two new vars
+> vars <- load_variables(2019, "acs5")
+> View(vars)
+
+[PHL Track Explorer](https://data-phl.opendata.arcgis.com/datasets/census-tracts-2010/explore?location=40.002759%2C-75.119097%2C11.91)
+
+
+```{r acs_vars, cache = TRUE, message = FALSE, warning = FALSE, results=FALSE}
+acs_vars <- c( "[PUT YOUR VAR CODES HERE]")
+
+myTracts <- c("[YOUR TRACTS GEOIDs HERE]")
+
+acsTractsPHL.2019.sf <- get_acs(geography = "tract",
+                             year = 2019,
+                             variables = acs_vars,
+                             geometry = TRUE,
+                             state  = "PA",
+                             county = "Philadelphia",
+                             output = "wide") %>%
+  dplyr::select (GEOID, NAME, all_of(paste0(acs_vars,"E"))) %>%
+  rename ("[RENAME YOUR VARIABLES HERE]") %>%
+  mutate(Neighborhood = ifelse(GEOID %in% myTracts,
+                               "[YOUR NEIGHBORHOOD NAME HERE]",
+                               "REST OF PHILADELPHIA"))
+```
+
+
+```{r ggplot_geom_sf, warning = FALSE, echo = FALSE}
+ggplot()+
+  geom_sf(data = acsTractsPHL.2019.sf, aes(fill = "[YOUR VARIABLE NAME HERE]"),
+          color = "transparent")+
+  geom_sf(data = acsTractsPHL.2019.sf %>%
+            filter(Neighborhood == "[YOUR NEIGHBORHOOD NAME HERE]") %>%
+            st_union(),
+          color = "white",
+          fill = "transparent")+
+  # Bonus to figure out different color ramps with scale_fill_viridis()
+  labs(
+    title = "[YOUR TITLE HERE]",
+    subtitle = "[YOUR SUBTITLE HERE]",
+    caption = "[YOUR CAPTION HERE]")
+
+```
