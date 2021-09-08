@@ -15,7 +15,7 @@ You will accomplish this by:
 
 * Install `Git` onto your computer
 
-* If you like, install GitHub Desktop onto your computer. RStudio as all the tools you need to work with GitHub as well, but your choice.
+* If you like, install GitHub Desktop onto your computer. RStudio is the only tool you’ll need to work with GitHub, but your choice.
 * `Fork` this GitHub repository to your GitHub account
 * Use RStudio to create a version controlled project from YOUR repo (which is a copy of this)
 * Once you have the files on your computer (aka `cloned` the repo), start working with the `MUSA_508_LAb2_sf.Rmd` file to learn about the `{sf}` package.
