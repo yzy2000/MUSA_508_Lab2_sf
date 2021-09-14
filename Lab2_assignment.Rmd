@@ -70,5 +70,5 @@ ggplot()+
   labs(
     title = "Percentage of people live alone",
     subtitle = "2019",
-    caption = "Data: US Census Bureau, ACS 5-year estimates")
+    caption = "Data From 2019 US Census Data")
 ```
